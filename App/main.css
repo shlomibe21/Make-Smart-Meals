@@ -1,0 +1,124 @@
+body {
+	padding-top: 20px;
+	font-family: 'Cabin';
+}
+
+h1, h2 {
+  font-family: 'Lato';
+  color: rgb(128, 0, 0);
+}
+
+.thumbnail-div {
+	margin-bottom: 25px;
+}
+
+.thumbnail img {
+	width: 100%;
+}
+
+img:hover {
+	cursor: pointer;
+}
+
+.modal {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	text-align: center;
+    z-index: 1; /* Sit on top */
+    background-color: rgba(0,0,0,0.5); /* Create overlay - black w/ opacity */
+}
+
+/* Centered child element can be any width and height */ 
+.centered-content {
+	position: fixed;
+	width: 100%;
+  	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+/* The Close Button */
+.modal-close {
+	position: absolute;
+	top: -30px;
+	right: 20px;
+	width: 1.5rem;
+    line-height: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    background-color: lightgray;
+}
+
+.modal-close:hover {
+	background-color: red;
+}
+
+/* Video container to maintain Youtube 16:9 aspect ratio */ 
+.videowrapper{
+	position: relative;
+	padding-top: 25px;
+	padding-bottom: 56.25%; /* 16:9 aspect ratio */
+	height: 0;
+}
+
+/* Make Youtube IFRAME responsive */ 
+.videowrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.js-youtube-control-buttons button {
+	display: none;
+	border: none;
+	min-width: 120px;
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 20px;
+    padding: 20px;
+	margin-bottom: 25px;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+    background: #0000CD;
+}
+
+.js-youtube-control-buttons button:focus {
+	background: red;
+}
+
+.js-youtube-control-buttons button:hover {
+	border: 2px solid skyblue;
+}
+
+.searchOptionsContainer {
+	height: 600px;
+	border: solid 2px black;
+	font-size: 12px;
+}
+
+.searchOptions2ndCol {
+	display: block;
+	width: 33%;
+	float: left;
+	border: solid 2px black;
+}
+
+.searchOptions2ndCol input[type="text"] {
+	display: inline-block;
+	width: 100%;
+	/*border: solid 2px black;*/
+}
+
+.col-header {
+	font-size: 16;
+	font-weight: bold;
+}

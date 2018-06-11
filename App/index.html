@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <meta charset="utf-8">
+    	<!-- Responsive viewport tag, tells small screens that it's responsive -->
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Make Smart Meals</title>
+		<link href='https://fonts.googleapis.com/css?family=Lato|Cabin' rel='stylesheet' type='text/css'>
+        <link href="main.css" rel="stylesheet" type="text/css" />
+    	<link href="float-grid.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+    	<header role="banner">
+    		<h1>Make Smart Meals</h1>
+    	</header>
+    	<main role="main">
+        	<form role="form" action="#" class="js-search-form">
+				<div class="row col-4">
+					<label for="query">Search</label>
+            		<input type="text" id="query" class="js-query" autocomplete="off">
+            		<button type="submit" class="submit-button" disabled>Search</button>
+					<div class="searchOptionsContainer">
+						<div class="searchOptions2ndCol">
+							<div>
+								<label class="col-header">Calories</label>
+							</div>
+							<div>
+								<label>From: </label>
+								<input type="text">
+							</div>
+							<div>
+								<label>To: </label>
+								<input type="text">
+							</div>
+							<div>
+								<label class="col-header">Ingredients</label>
+							</div>
+							<div>
+								<label>Up to:</label>
+								<input type="text">
+							</div>
+						</div>
+						<div class="searchOptions2ndCol">
+							<div>
+								<label class="col-header">Diet</label>
+							</div>
+							<div>
+								<input type="checkbox" id="vegetarian" value="vegetarian">
+								<label for="vegetarian">Vegetarian</label>		
+							</div>
+							<div>
+								<input type="checkbox" id="vegan" value="vegan">
+								<label for="vegan">Vegan</label>				
+							</div>
+							<div>
+								<input type="checkbox" id="paleo" value="paleo">
+								<label for="paleo">Paleo</label>
+							</div>
+							<div>
+								<input type="checkbox" id="high-fiber" value="high-fiber">
+								<label for="high-fiber">High-Fiber</label>
+							</div>
+							<div>
+								<input type="checkbox" id="high-protein" value="high-protein">
+								<label for="high-protein">High-Protein</label>
+							</div>
+							<div>							
+								<input type="checkbox" id="low-carb" 	value="low-carb">
+								<label for="low-carb">Low-Carb</label>
+							</div>
+							<div>
+								<input type="checkbox" id="low-fat" value="low-fat">
+								<label for="low-fat">Low-Fat</label>
+							</div>
+							<div>							
+								<input type="checkbox" id="low-sodium" value="low-sodium">
+								<label for="low-sodium">Low-Sodium</label>
+							</div>
+							<div>							
+								<input type="checkbox" id="low-sugar" value="low-sugar">
+								<label for="low-sugar">low-sugar</label>
+							</div>
+							<div>							
+								<input type="checkbox" id="alcohol-free" value="alcohol-free">
+								<label for="alcohol-free">Alcohol-Free</label>
+							</div>
+							<div>							
+								<input type="checkbox" id="balanced" value="balanced">
+								<label for="balanced">Balanced</label>
+							</div>
+						</div>
+						<div class="searchOptions2ndCol">
+							<div>
+								<label class="col-header">Allergies</label>
+							</div>
+							<div>
+								<input type="checkbox" id="gluten" value="gluten">
+								<label for="gluten">Gluten</label>
+							</div>
+							<div>
+								<input type="checkbox" id="dairy" value="dairy">
+								<label for="dairy">Dairy</label>
+							</div>
+							<div>
+								<input type="checkbox" id="eggs" value="eggs">
+								<label for="eggs">Eggs</label>
+							</div>
+							<div>
+								<input type="checkbox" id="soy" value="soy">
+								<label for="soy">Soy</label>
+							</div>
+							<div>
+								<input type="checkbox" id="wheat" value="wheat">
+								<label for="wheat">Wheat</label>
+							</div>
+							<div>
+								<input type="checkbox" id="fish" value="fish">
+								<label for="fish">Fish</label>
+							</div>
+							<div>
+								<input type="checkbox" id="shelfish" value="shelfish">
+								<label for="shelfish">Shelfish</label>
+							</div>
+							<div>
+								<input type="checkbox" id="tree-nuts" value="tree-nuts">
+								<label for="tree-nuts">Tree Nuts</label>
+							</div>
+							<div>
+								<input type="checkbox" id="peanuts" value="peanuts">
+								<label for="peanuts">Peanuts</label>
+							</div>
+						</div>
+					</div>
+				</div>
+        	</form>
+
+    		<h2><span class="results-info" aria-live="assertive">Results: </span></h2>
+			<div class="row js-edamam-search-results"></div>
+    		<div class="row js-youtube-search-results"></div>
+      		<div class="row js-youtube-control-buttons">
+        		<button type="button" class="prev-youtube-page-button">Previous</button>
+        		<button type="button" class="next-youtube-page-button">Next</button>
+      		</div>
+      		<div class="js-youtube-video"></div>
+    	</main>
+		<script
+          src="https://code.jquery.com/jquery-3.2.1.min.js"
+          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+          crossorigin="anonymous"></script>
+    	<script src="config.js" type="text/javascript"></script>
+    	<script src="index.js" type="text/javascript"></script>
+    </body>
+</html>
