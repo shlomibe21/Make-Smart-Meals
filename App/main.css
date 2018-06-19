@@ -1,15 +1,43 @@
-body {
-	padding-top: 20px;
-	font-family: 'Cabin';
+* {
+  box-sizing: border-box;
 }
 
-h1, h2 {
-  font-family: 'Lato';
-  color: rgb(128, 0, 0);
+body {
+	font-family: 'Archivo', sans-serif;
+	margin-bottom: 100px;
+}
+
+footer {
+	position: fixed;
+   	bottom: 0px;
+	left: 0px;
+   	width: 100%;
+	height: 50px;
+   	background-color: #eee;
+   	padding-left: 15px;
+}
+
+footer p {    
+	display: inline-block;    
+	vertical-align: middle;
+}
+
+h1, h2, h3 {
+  	color: orange;
+}
+
+h1 {
+  	text-align: center;
+  	font-size: 3em;
 }
 
 .thumbnail-div {
-	margin-bottom: 25px;
+	border: solid 1px orange;
+	width: 100%;
+	padding: 10px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	/*background-color: #eee;*/
 }
 
 .thumbnail img {
@@ -28,10 +56,10 @@ img:hover {
 	top: 0;
 	text-align: center;
     z-index: 1; /* Sit on top */
-    background-color: rgba(0,0,0,0.5); /* Create overlay - black w/ opacity */
+    background-color: rgba(0,0,0,0.8); /* Create overlay - black w/ opacity */
 }
 
-/* Centered child element can be any width and height */ 
+/* Centered child element */ 
 .centered-content {
 	position: fixed;
 	width: 100%;
@@ -40,9 +68,10 @@ img:hover {
   	transform: translate(-50%, -50%);
 	padding-left: 20px;
 	padding-right: 20px;
+	margin-bottom: 100px;
 }
 
-/* The Close Button */
+/* The modal's close button */
 .modal-close {
 	position: absolute;
 	top: -30px;
@@ -52,7 +81,7 @@ img:hover {
     text-align: center;
     cursor: pointer;
     border-radius: 0.25rem;
-    background-color: lightgray;
+    background-color: #eee;
 }
 
 .modal-close:hover {
@@ -76,19 +105,38 @@ img:hover {
 	height: 100%;
 }
 
-.js-youtube-control-buttons button {
-	display: none;
+button {
 	border: none;
 	min-width: 120px;
+	height: 40px;
     border-radius: 5px;
     color: #ffffff;
-    font-size: 20px;
-    padding: 20px;
-	margin-bottom: 25px;
+	margin-bottom: 20px;
     text-decoration: none;
     cursor: pointer;
-    outline: none;
     background: #0000CD;
+	font-size: 1em;
+}
+
+input {
+	border: solid 1px #eee;
+	border-radius: 5px;
+	padding-left: 1.5%;
+}
+
+select {
+	border: solid 1px #eee;
+	border-radius: 5px;
+	padding-left: 1.5%;
+}
+
+#search-again-button {
+	display: none;
+	margin-left: 20px;
+}
+
+.js-youtube-control-buttons button {
+	display: none;
 }
 
 .js-youtube-control-buttons button:focus {
@@ -99,26 +147,72 @@ img:hover {
 	border: 2px solid skyblue;
 }
 
-.searchOptionsContainer {
-	height: 600px;
-	border: solid 2px black;
-	font-size: 12px;
-}
-
-.searchOptions2ndCol {
-	display: block;
-	width: 33%;
-	float: left;
-	border: solid 2px black;
-}
-
-.searchOptions2ndCol input[type="text"] {
-	display: inline-block;
+.search-container {
 	width: 100%;
-	/*border: solid 2px black;*/
+	margin-top: 0px;
+  	position: relative;
+  	margin-left: auto;
+  	margin-right: auto;
+	padding: 20px;
+	border: solid 1px orange;
+    background: #eee;
+    overflow-x: hidden;
 }
 
 .col-header {
-	font-size: 16;
+	font-size: 0.9em;
 	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.search-container input {
+	width: 100%;
+	height: 40px;
+	margin-bottom: 10px;
+	font-size: 0.8em;
+}
+
+.search-container select {
+	width: 100%;
+	height: 40px;
+	margin-bottom: 10px;
+	font-size: 0.8em;
+}
+
+.search-container button {
+	display: inline-block;
+	width: 100%;
+	height: 40px;
+	margin-bottom: 10px;
+	font-size: 0.8em;
+	font-weight: bold;
+}
+
+.search-container h3 {
+	margin-top: 0px;
+	margin-bottom: 10px;
+}
+
+#clear-search-fields {
+	width: 25%;
+	text-align: left;
+	color: blue;
+	background: none;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+.meal-title {
+	font-size: 2.2em;
+	font-weight: bold;
+	/*margin-left: 20px;*/
+	color: orange;
+}
+
+.introduction {
+	font-size: 20px;
+	font-weight: bold;
+	color: orange;
+	text-align: center;
 }
