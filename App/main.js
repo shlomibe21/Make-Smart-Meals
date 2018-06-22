@@ -25,7 +25,7 @@ let edamamBreakfastData;
 let edamamLunchData;
 let edamamDinnerData;
 // Set default min and max calories
-const defaultMinCalories = 100;
+const defaultMinCalories = 10;
 const defaultMaxCalories = 10000;
 
 function closeVideo() {
