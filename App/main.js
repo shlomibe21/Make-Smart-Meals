@@ -1,9 +1,32 @@
 'use strict';
 
-let query;
-let pageToken;
-let youTubeNextPageToken;
-let youTubePrevPageToken;
+// Create a searchQuery object
+let searchQuery = {};
+// Youtube parameters
+let youTubePageToken;
+let youTubeBreakfastNextPageToken;
+let youTubeBreakfastPrevPageToken;
+let youTubeLunchNextPageToken;
+let youTubeLunchPrevPageToken;
+let youTubeDinnerNextPageToken;
+let youTubeDinnerPrevPageToken;
+// Edamam parameters
+const edamamGetMinRecipeNum = 0;
+const edamamGetMaxRecipeNum = 40;
+const edamamRecipesPerPage = 4;
+let edamamMinBreakfastRecipeNum = 0;
+let edamamMaxBreakfastRecipeNum = edamamRecipesPerPage;
+let edamamMinLunchRecipeNum = 0;
+let edamamMaxLunchRecipeNum = edamamRecipesPerPage;
+let edamamMinDinnerRecipeNum = 0;
+let edamamMaxDinnerRecipeNum = edamamRecipesPerPage;
+// Store the entire data for each meal from Edamam server here
+let edamamBreakfastData;
+let edamamLunchData;
+let edamamDinnerData;
+// Set default min and max calories
+const defaultMinCalories = 100;
+const defaultMaxCalories = 10000;
 
 function closeVideo() {
 	// Stop the video
@@ -39,11 +62,9 @@ function closeModalKeyupClick() {
 function searchAgainButtonClick() {
 	$('#search-again-button').click(function(event) {
 		$('#search-again-button').hide();
-		$('.search-container').show();
-		// Remove previous stuff from the page
-		//$('.js-edamam-results').empty();
-		//$('.js-youtube-results').empty();
-		
+		$('.search-container').slideDown("slow");
+		// Reset youTubePageToken
+		youTubePageToken = null;		
 	});
 }
 
@@ -84,18 +105,18 @@ function youtubeThumbnailKeyup() {
 	});
 }
 
-// TODO: use this event to display ingredients
 function edamamThumbnailClick() {
 	$('#js-edamam-breakfast-results,#js-edamam-lunch-results,#js-edamam-dinner-results').on('click', '.thumbnail', function(event) {
-		
+		let url = $(this).data('recipeurl');
+		window.open(url);
 	});
 }
 
-// TODO: use this event to display ingredients
 function edamamThumbnailKeyup() {
 	$('#js-edamam-breakfast-results,#js-edamam-lunch-results,#js-edamam-dinner-results').on('keyup', '.thumbnail', function(event) {
 		if (event.keyCode === 13) {
-			
+			let url = $(this).data('recipeurl');
+			window.open(url);
 		}
 	});
 }
@@ -114,26 +135,30 @@ function edamamThumbnailKeyup() {
 function clearAllFormFields() {
 	$("input").val("");
 	$("select").val("");
+	$("#calories-min").val(defaultMinCalories);
+	$("#calories-max").val(defaultMaxCalories);
 }
 
-function getEdamamRecipes(searchQuery, callback) {
+function getEdamamRecipes(searchQuery, callback, meal) {	
 	const settings = {
 		url: SEARCH_URL.EDAMAM,
 		data: {
-			q: searchQuery.q,
+			q: searchQuery.query,
 			calories: searchQuery.calories,
 			ingr: searchQuery.ingr,
 			diet: searchQuery.diet,
 			health: searchQuery.health,
-			from: 0,
-			to: 4,
+			from: edamamGetMinRecipeNum,
+			to: edamamGetMaxRecipeNum,
 			app_id: API_ID.EDAMAM,
-			app_key: API_KEY.EDAMAM},
+			app_key: API_KEY.EDAMAM
+		},
 		dataType: 'json',
 		type: 'GET',
 		success: callback,
 		error: function (jqXHR) {
 			// TODO: print an error to the user
+			alert("EDAMAM SERVER ERROR! Can't display " + meal + " results. Please wait a few minutes and try again.");
 			console.log("Error: " + jqXHR);
 		},
 	};
@@ -141,83 +166,199 @@ function getEdamamRecipes(searchQuery, callback) {
 }
 
 function renderEdamamResult(result) {
-	//console.log("recipe.dietLabels: " + result.recipe.dietLabels);
-	//console.log("recipe.healthLabels: " + result.recipe.healthLabels);
-	//console.log("recipe.allergen: " + result.allergen);
+	if(!result) {
+		return;
+	}
+	let calories;
+	let infoTemplate ='';
+	if((result.recipe.calories) && (result.recipe.yield)) {
+		calories = result.recipe.calories/result.recipe.yield;
+		calories = Math.floor(calories);
+		infoTemplate = `Calories:${calories} Yield:${result.recipe.yield}`;
+	}
+	
 	return `
-    <div class="col-3">
-	<div class="thumbnail-div">
-	<a class="thumbnail" title="${result.recipe.label}">	
+    <div class="col-3 thumbnail-div">
+	<a class="thumbnail" data-recipeUrl="${result.recipe.url}" title="${result.recipe.label}">	
 	<img src=${result.recipe.image} alt="${result.recipe.label}" tabindex="0"></a>
 	<p>${result.recipe.label}</P>
+	<p class="recipe-info">${infoTemplate}</p>
 	<a href="${result.recipe.url}" target="_blank">${result.recipe.source}</a>
-	</div>
 	</div>
   	`;
 }
 
-function displayEdamamResults(data, meal) {
-	let nextButton = '';
-	let prevButton = '';
+function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipeNum) {
 	let pageContent;
 	let template;
+	let imgSrc;
+	let imgAlt;
+	let divId;
+	let prevButton = '';
+	let nextButton = '';
+	let prevButtonId;
+	let nextButtonId;
 	
 	// Make sure that data is valid, if not display error message
-	if((!data) || (data.count ===0)) {
+	if(!data) {
+		alert("Error! Sorry, we can't display any recipe!");
+		return;
+	}
+
+	switch(meal) {
+		case 'Breakfast':
+			edamamBreakfastData = data;
+			imgSrc = "breakfast-square.jpg";
+			imgAlt = "Breakfast Image";
+			divId = '#js-edamam-breakfast-results';
+			prevButtonId = 'js-edamam-prev-page-breakfast';
+			nextButtonId = 'js-edamam-next-page-breakfast';
+
+			if(edamamBreakfastData.count > edamamGetMaxRecipeNum) {
+				edamamBreakfastData.count = edamamGetMaxRecipeNum;
+			}
+			if(edamamFirstRecipeNum < 0) {
+				edamamFirstRecipeNum = 0;
+			}
+			if(edamamLastRecipeNum > edamamBreakfastData.count) {
+				edamamLastRecipeNum = edamamBreakfastData.count;
+			}
+
+			if(edamamFirstRecipeNum > 0) {
+				prevButton = `<button type="button" class="prev-page-button" id=${prevButtonId}><span>Previous</span></button>`;
+			}
+			
+			if(edamamLastRecipeNum < edamamBreakfastData.count) {
+				nextButton = `<button type="button" class="next-page-button" id=${nextButtonId}><span>Next</span></button>`;		
+			}
+		break;
+		case 'Lunch':
+			edamamLunchData = data;
+			imgSrc = "lunch-square.jpg";
+			imgAlt = "Lunch Image";
+			divId = '#js-edamam-lunch-results';
+			prevButtonId = 'js-edamam-prev-page-lunch';
+			nextButtonId = 'js-edamam-next-page-lunch';
+
+			if(edamamLunchData.count > edamamGetMaxRecipeNum) {
+				edamamLunchData.count = edamamGetMaxRecipeNum;
+			}
+			if(edamamFirstRecipeNum < 0) {
+				edamamFirstRecipeNum = 0;
+			}
+			if(edamamLastRecipeNum > edamamLunchData.count) {
+				edamamLastRecipeNum = edamamLunchData.count;
+			}
+
+			if(edamamFirstRecipeNum > 0) {
+				prevButton = `<button type="button" class="prev-page-button" id=${prevButtonId}><span>Previous</span></button>`;
+			}
+			if(edamamLastRecipeNum < edamamLunchData.count) {
+				nextButton = `<button type="button" class="next-page-button" id=${nextButtonId}><span>Next</span></button>`;
+			}
+		break;
+		case 'Dinner':
+			edamamDinnerData = data;
+			imgSrc = "dinner-square.jpg";
+			imgAlt = "Dinner Image";
+			divId = '#js-edamam-dinner-results';
+			prevButtonId = 'js-edamam-prev-page-dinner';
+			nextButtonId = 'js-edamam-next-page-dinner';
+
+			if(edamamDinnerData.count > edamamGetMaxRecipeNum) {
+				edamamDinnerData.count = edamamGetMaxRecipeNum;
+			}
+			if(edamamFirstRecipeNum < 0) {
+				edamamFirstRecipeNum = 0;
+			}
+			if(edamamLastRecipeNum > edamamDinnerData.count) {
+				edamamLastRecipeNum = edamamDinnerData.count;
+			}
+
+			if(edamamFirstRecipeNum > 0) {
+				prevButton = `<button type="button" class="prev-page-button" id=${prevButtonId}><span>Previous</span></button>`;
+			}
+			if(edamamLastRecipeNum < edamamDinnerData.count) {
+				nextButton = `<button type="button" class="next-page-button" id=${nextButtonId}><span>Next</span></button>`;
+			}
+		break;
+	}
+
+	// In case of no data display a message to user
+	if(data.count === 0) {
 		template = `
-		<hr>
+		<div class="row">
+		<img src=${imgSrc} alt=${imgAlt} class="meal-icon"></a>
 		<p class="meal-title">${meal}</p>
-		<p>We couldn't find any recipe!</p>
+		<p>Sorry, we couldn't find any recipe!</p>
+		</div>
 		`;
 	}
 	else {
-		//console.log(data.count);
-		//let totalResults = `We found about ${data.count} results`;
-		const results = data.hits.map((item, index) => renderEdamamResult(item));
-		//$('.results-info').html(totalResults);
+		// Build the template for the actual results to display on the page
+		let results = [];
+		let totalResults = data.count;
+		let totalResultsStr = `We found about ${data.count} results`;
+
+		try {
+    		for(let i = edamamFirstRecipeNum; i < edamamLastRecipeNum; i++) {
+				results.push(renderEdamamResult(data.hits[i]));
+			}
+		}
+		catch(err) {
+    		console.log(err);
+			return;
+		} 
+		
 		template = `
-		<hr>
+		<img src=${imgSrc} alt=${imgAlt} class="meal-icon"></a>
 		<p class="meal-title">${meal}</p>
+		<div class="row">
 		<section role="region">
-		<legend>Recipes:</legend>
+		<legend class="results-title">Recipes:</legend>
 		${results.join("")}
+		</div>
+		<div>
+		${prevButton}
+		${nextButton}
+		</div>
 		</region>
 		`;	
 	}
 	
-	switch(meal) {
-		case 'Breakfast':
-			$('#js-edamam-breakfast-results').html(template);
-		break;
-		case 'Lunch':
-			$('#js-edamam-lunch-results').html(template);
-		break;
-		case 'Dinner':
-			$('#js-edamam-dinner-results').html(template);
-		break;
-	}
+	$(divId).html(template);
 }
 
+// Callback function
 function displayEdamamBreakfastResults(data) {
-	displayEdamamResults(data, 'Breakfast')
+	edamamMinBreakfastRecipeNum = 0;
+	edamamMaxBreakfastRecipeNum = edamamRecipesPerPage;
+	displayEdamamResults(data, 'Breakfast', edamamMinBreakfastRecipeNum, edamamMaxBreakfastRecipeNum);
 }
 
+// Callback function
 function displayEdamamLunchResults(data) {
-	displayEdamamResults(data, 'Lunch')
+	edamamMinLunchRecipeNum = 0;
+	edamamMaxLunchRecipeNum = edamamRecipesPerPage;
+	displayEdamamResults(data, 'Lunch', edamamMinLunchRecipeNum, edamamMaxLunchRecipeNum);
 }
 
+// Callback function
 function displayEdamamDinnerResults(data) {
-	displayEdamamResults(data, 'Dinner')
+	edamamMinDinnerRecipeNum = 0;
+	edamamMaxDinnerRecipeNum = edamamRecipesPerPage;
+	displayEdamamResults(data, 'Dinner', edamamMinDinnerRecipeNum, edamamMaxDinnerRecipeNum);
 }
 
 function getYouTubeDataFromApi(searchTerm, callback) {
+	let query = searchTerm + " recipes";
 	const settings = {
 		url: SEARCH_URL.YOUTUBE,
 		data: {
 			part: 'snippet',
-			q: `${searchTerm} recipes`,
+			q: query,
 			maxResults: '4',
-			pageToken: pageToken,
+			pageToken: youTubePageToken,
 			key: API_KEY.YOUTUBE,
 		},
 		dataType: 'json',
@@ -233,129 +374,238 @@ function renderYouTubeResult(result) {
     <div class="col-3">
 	<div class="thumbnail-div">
 	<a class="thumbnail" data-videoId="${result.id.videoId}" title="${result.snippet
-			.title}">	
+			.title}">
+	<div class="youtube-img">
 	<img src=${result.snippet.thumbnails.medium.url} alt="${result.snippet
-			.title}" tabindex="0"></a>
+			.title}" tabindex="0"><img src="youtube-icon.png" class="youtube-play-icon"></a>
+	</div>
 	<a href="https://www.youtube.com/channel/${result.snippet
-			.channelId}" class="channel-link" target="blank">More...</a>
+			.channelId}" class="channel-link" target="blank">More from this channel...</a>
 	</div>
 	</div>
   	`;
 }
 
 function displayYouTubeSearchResults(data, meal) {
-	let nextButton = '';
+	let template = '';
+	let divId = '';
 	let prevButton = '';
-	let pageContent;
-	let template;
+	let nextButton = '';
+	let prevButtonId = '';
+	let nextButtonId = '';
+	
+	switch(meal) {
+		case 'Breakfast':
+			divId = '#js-youtube-breakfast-results';
+			prevButtonId = 'js-youtube-prev-page-breakfast';
+			nextButtonId = 'js-youtube-next-page-breakfast';
+			if(data) {
+				if(data.prevPageToken) {
+					youTubeBreakfastPrevPageToken = data.prevPageToken;
+					prevButton = `<button type="button" class="prev-page-button" id=${prevButtonId}><span>Previous</span></button>`;
+				}
+				if(data.nextPageToken) {
+					youTubeBreakfastNextPageToken = data.nextPageToken;
+					nextButton = `<button type="button" class="next-page-button" id=${nextButtonId}><span>Next</span></button>`;
+				}
+			}
+		break;
+		case 'Lunch':
+			divId = '#js-youtube-lunch-results';
+			prevButtonId = 'js-youtube-prev-page-lunch';
+			nextButtonId = 'js-youtube-next-page-lunch';
+			if(data) {			
+				if(data.prevPageToken) {
+					youTubeLunchPrevPageToken = data.prevPageToken;
+					prevButton = `<button type="button" class="prev-page-button" id=${prevButtonId}><span>Previous</span></button>`;
+				}
+				if(data.nextPageToken) {
+					youTubeLunchNextPageToken = data.nextPageToken;
+					nextButton = `<button type="button" class="next-page-button" id=${nextButtonId}><span>Next</span></button>`;
+				}
+			}
+		break;
+		case 'Dinner':
+			divId = '#js-youtube-dinner-results';
+			prevButtonId = 'js-youtube-prev-page-dinner';
+			nextButtonId = 'js-youtube-next-page-dinner';
+			if(data) {
+				if(data.prevPageToken) {
+					youTubeDinnerPrevPageToken = data.prevPageToken;
+					prevButton = `<button type="button" class="prev-page-button" id=${prevButtonId}><span>Previous</span></button>`;
+				}
+				if(data.nextPageToken) {
+					youTubeDinnerNextPageToken = data.nextPageToken;
+					nextButton = `<button type="button" class="next-page-button" id=${nextButtonId}><span>Next</span></button>`;
+				}
+			}
+		break;
+	}
 
 	if((!data) || (data.pageInfo.totalResults === 0)) {
 		template = `
-		<p>We couldn't find any video!</p>
+		<div class="row">
+		<p>Sorry, we couldn't find any video!</p>
+		</div>
 		`;
 	}
 	else {
-		//let totalResults = `We found about ${data.pageInfo.totalResults} results`;
-		youTubeNextPageToken = data.youTubeNextPageToken;
-		youTubePrevPageToken = data.youTubePrevPageToken;
 		const results = data.items.map((item, index) => renderYouTubeResult(item));
-		//$('.results-info').html(totalResults);
-		//$('.js-youtube-search-results').html(results);
 
 		template = `
 			<section role="region">
-			<legend>Suggested Videos:</legend>
+			<div class="row">
+			<legend class="results-title">Suggested Videos:</legend>
 			${results.join("")}
+			</div>
+			<div>
+			${prevButton}
+			${nextButton}
+			</div>
 			</region>
 		`;
 	}
-
-	switch(meal) {
-		case 'Breakfast':
-			$('#js-youtube-breakfast-results').html(template);
-		break;
-		case 'Lunch':
-			$('#js-youtube-lunch-results').html(template);
-		break;
-		case 'Dinner':
-			$('#js-youtube-dinner-results').html(template);
-		break;
-	}
-
-	// Display next page and prev page buttons
-	// Not in use for now
-	//$('.js-youtube-search-results').html(template);
-	//if (youTubePrevPageToken) {
-		//$('.prev-youtube-page-button').show();
-	//}
-	//else {
-		//$('.prev-youtube-page-button').hide();
-	//}
-	//if (youTubeNextPageToken) {
-		//$('.next-youtube-page-button').show();
-	//}
-	//else {
-		//$('.next-youtube-page-button').hide();
-	//}
+	// Display results on page for the current meal
+	$(divId).html(template);
 }
 
+// Callback function
 function displayYouTubeBreakfastResults(data) {
 	displayYouTubeSearchResults(data, 'Breakfast')
 }
 
+// Callback function
 function displayYouTubeLunchResults(data) {
 	displayYouTubeSearchResults(data, 'Lunch')
 }
 
+// Callback function
 function displayYouTubeDinnerResults(data) {
 	displayYouTubeSearchResults(data, 'Dinner')
 }
 
-function nextPageClick() {
-	$('.js-youtube-control-buttons').on('click', '.next-youtube-page-button', function (event) {
-		pageToken = youTubeNextPageToken;
-		getYouTubeDataFromApi(query, displayYouTubeSearchResults);
+function youTubeNextPageBreakfastClick() {
+	$('#js-youtube-breakfast-results').on('click', '#js-youtube-next-page-breakfast', function (event) {
+		youTubePageToken = youTubeBreakfastNextPageToken;
+		getYouTubeDataFromApi(searchQuery.breakfastQuery, displayYouTubeBreakfastResults);
 	});
 }
 
-function prevPageClick() {
-	$('.js-youtube-control-buttons').on('click', '.prev-youtube-page-button', function (event) {
-		pageToken = youTubePrevPageToken;
-		getYouTubeDataFromApi(query, displayYouTubeSearchResults);
+function youTubePrevPageBreakfastClick() {
+	$('#js-youtube-breakfast-results').on('click', '#js-youtube-prev-page-breakfast', function (event) {
+		youTubePageToken = youTubeBreakfastPrevPageToken;
+		getYouTubeDataFromApi(searchQuery.breakfastQuery, displayYouTubeBreakfastResults);
+	});
+}
+
+function youTubeNextPageLunchClick() {
+	$('#js-youtube-lunch-results').on('click', '#js-youtube-next-page-lunch', function (event) {
+		youTubePageToken = youTubeLunchNextPageToken;
+		getYouTubeDataFromApi(searchQuery.lunchQuery, displayYouTubeLunchResults);
+	});
+}
+
+function youTubePrevPageLunchClick() {
+	$('#js-youtube-lunch-results').on('click', '#js-youtube-prev-page-lunch', function (event) {
+		youTubePageToken = youTubeLunchPrevPageToken;
+		getYouTubeDataFromApi(searchQuery.lunchQuery, displayYouTubeLunchResults);
+	});
+}
+
+function youTubeNextPageDinnerClick() {
+	$('#js-youtube-dinner-results').on('click', '#js-youtube-next-page-dinner', function (event) {
+		youTubePageToken = youTubeDinnerNextPageToken;
+		getYouTubeDataFromApi(searchQuery.dinnerQuery, displayYouTubeDinnerResults);
+	});
+}
+
+function youTubePrevPageDinnerClick() {
+	$('#js-youtube-dinner-results').on('click', '#js-youtube-prev-page-dinner', function (event) {
+		youTubePageToken = youTubeDinnerPrevPageToken;
+		getYouTubeDataFromApi(searchQuery.dinnerQuery, displayYouTubeDinnerResults);
+	});
+}
+
+function edamamNextPageBreakfastClick() {
+	$('#js-edamam-breakfast-results').on('click', '#js-edamam-next-page-breakfast', function (event) {
+		edamamMaxBreakfastRecipeNum += edamamRecipesPerPage;
+		edamamMinBreakfastRecipeNum += edamamRecipesPerPage;
+		displayEdamamResults(edamamBreakfastData, "Breakfast", edamamMinBreakfastRecipeNum, edamamMaxBreakfastRecipeNum);
+	});
+}
+
+function edamamPrevPageBreakfastClick() {
+	$('#js-edamam-breakfast-results').on('click', '#js-edamam-prev-page-breakfast', function (event) {
+		edamamMinBreakfastRecipeNum -= edamamRecipesPerPage;
+		edamamMaxBreakfastRecipeNum -= edamamRecipesPerPage;
+		if(edamamMinBreakfastRecipeNum < 0) {
+			edamamMinBreakfastRecipeNum = 0;
+		}
+		displayEdamamResults(edamamBreakfastData, "Breakfast", edamamMinBreakfastRecipeNum, edamamMaxBreakfastRecipeNum);
+	});
+}
+
+function edamamNextPageLunchClick() {
+	$('#js-edamam-lunch-results').on('click', '#js-edamam-next-page-lunch', function (event) {		
+		edamamMinLunchRecipeNum += edamamRecipesPerPage;
+		edamamMaxLunchRecipeNum += edamamRecipesPerPage;
+		displayEdamamResults(edamamLunchData, "Lunch", edamamMinLunchRecipeNum, edamamMaxLunchRecipeNum);
+	});
+}
+
+function edamamPrevPageLunchClick() {
+	$('#js-edamam-lunch-results').on('click', '#js-edamam-prev-page-lunch', function (event) {		
+		edamamMinLunchRecipeNum -= edamamRecipesPerPage;
+		edamamMaxLunchRecipeNum -= edamamRecipesPerPage;
+		if(edamamMinLunchRecipeNum < 0) {
+			edamamMinLunchRecipeNum = 0;
+		}
+		displayEdamamResults(edamamLunchData, "Lunch", edamamMinLunchRecipeNum, edamamMaxLunchRecipeNum);
+	});
+}
+
+function edamamNextPageDinnerClick() {
+	$('#js-edamam-dinner-results').on('click', '#js-edamam-next-page-dinner', function (event) {
+		edamamMinDinnerRecipeNum += edamamRecipesPerPage;
+		edamamMaxDinnerRecipeNum += edamamRecipesPerPage;
+		displayEdamamResults(edamamDinnerData, "Dinner", edamamMinDinnerRecipeNum, edamamMaxDinnerRecipeNum);
+	});
+}
+
+function edamamPrevPageDinnerClick() {
+	$('#js-edamam-dinner-results').on('click', '#js-edamam-prev-page-dinner', function (event) {		
+		edamamMinDinnerRecipeNum -= edamamRecipesPerPage;
+		edamamMaxDinnerRecipeNum -= edamamRecipesPerPage;
+		if(edamamMinDinnerRecipeNum < 0) {
+			edamamMinDinnerRecipeNum = 0;
+		}
+		displayEdamamResults(edamamDinnerData, "Dinner", edamamMinDinnerRecipeNum, edamamMaxDinnerRecipeNum);
 	});
 }
 
 function searchSubmit() {
 	$('.js-search-form').submit(event => {
 		event.preventDefault();
+		let minCaloriesPerMeal = defaultMinCalories;
+		let maxCaloriesPerMeal = defaultMaxCalories;
+
 		// Fetch all the the data from the form
 		var fields = $("form").serializeArray();
-		let breakfastQuery;
-		let lunchQuery;
-		let dinnerQuery;
-		// Make a plan for 3 meals a day
-		const numOfMeals = 3;
-		// Set default min and max calories
-		let minCalories = 100;
-		let maxCalories = 10000;	
-		// Split calories between meals evenly
-		let minCaloriesPerMeal = Math.floor(minCalories/numOfMeals);
-		let maxCaloriesPerMeal = Math.floor(maxCalories/numOfMeals);
-		// Create a searchQuery object
-		let searchQuery = {};
 
+		// Remove previous results from the page
+		$('.js-edamam-results').empty();
+		$('.js-youtube-results').empty();
 		// Update 'searchQuery' with the values from the form
 		jQuery.each(fields, function (i, field) {
-			//console.log(field.name + ": " + field.value);
 			switch (field.name) {
 				case "breakfast-query":
-					breakfastQuery = field.value;
+					searchQuery.breakfastQuery = field.value;
 				break;
 				case "lunch-query":
-					lunchQuery = field.value;
+					searchQuery.lunchQuery = field.value;
 				break;
 				case "dinner-query":
-					dinnerQuery = field.value;
+					searchQuery.dinnerQuery = field.value;
 				break;
 				case "max-ingredients":
 					if (field.value) {
@@ -374,16 +624,22 @@ function searchSubmit() {
 				break;
 				case "calories-min":
 					if (field.value) {
-						minCaloriesPerMeal = Math.floor(field.value/numOfMeals);
+						minCaloriesPerMeal = field.value;
 					}
 				break;
 				case "calories-max":
 					if (field.value) {
-						maxCaloriesPerMeal = Math.floor(field.value/numOfMeals);
+						maxCaloriesPerMeal = field.value;
 					}
 				break;
 			}
 		});
+
+		if((searchQuery.breakfastQuery.length === 0) && (searchQuery.lunchQuery.length === 0) && 	(searchQuery.dinnerQuery.length === 0)) {
+			alert("Sorry, we can't help you if you don't tell us what you want to eat. Please enter preferences for at least one meal (i.e. Breakfast, Lunch, or Dinner).");
+			return;
+		}
+
 		// After fetching data from the form, validate min and max calories and update the system
 		if (parseInt(maxCaloriesPerMeal) <= parseInt(minCaloriesPerMeal)) {
 			alert("Max calories should be higher than Min calories!");
@@ -391,18 +647,25 @@ function searchSubmit() {
 		}
 		searchQuery.calories = minCaloriesPerMeal + '-' + maxCaloriesPerMeal;
 
-		$('.search-container').hide();
+		//$( "div" ).hide( "drop", { direction: "down" }, "slow" );
+		$('.search-container').slideUp("slow");
 		$('#search-again-button').show();
 
-		searchQuery.q = breakfastQuery + ", breakfast";
-		getEdamamRecipes(searchQuery, displayEdamamBreakfastResults);
-		getYouTubeDataFromApi(searchQuery.q, displayYouTubeBreakfastResults);
-		searchQuery.q = lunchQuery + ", lunch";
-		getEdamamRecipes(searchQuery, displayEdamamLunchResults);
-		getYouTubeDataFromApi(searchQuery.q, displayYouTubeLunchResults);
-		searchQuery.q = dinnerQuery + ", dinner";
-		getEdamamRecipes(searchQuery, displayEdamamDinnerResults);
-		getYouTubeDataFromApi(searchQuery.q, displayYouTubeDinnerResults);
+		if (searchQuery.breakfastQuery) {
+			searchQuery.query = searchQuery.breakfastQuery;
+			getEdamamRecipes(searchQuery, displayEdamamBreakfastResults, "Breakfast");
+			getYouTubeDataFromApi(searchQuery.query, displayYouTubeBreakfastResults);
+		}
+		if (searchQuery.lunchQuery){
+			searchQuery.query = searchQuery.lunchQuery;
+			getEdamamRecipes(searchQuery, displayEdamamLunchResults, "Lunch");
+			getYouTubeDataFromApi(searchQuery.query, displayYouTubeLunchResults);
+		}
+		if (searchQuery.dinnerQuery) {
+			searchQuery.query = searchQuery.dinnerQuery;
+			getEdamamRecipes(searchQuery, displayEdamamDinnerResults, "Dinner");
+			getYouTubeDataFromApi(searchQuery.query, displayYouTubeDinnerResults);
+		}
 	});
 }
 
@@ -412,8 +675,18 @@ function handleYoutubeSearch() {
 	youtubeThumbnailKeyup();
 	edamamThumbnailClick();
 	edamamThumbnailKeyup();
-	nextPageClick();
-	prevPageClick();
+	youTubeNextPageBreakfastClick();
+	youTubePrevPageBreakfastClick();
+	youTubeNextPageLunchClick();
+	youTubePrevPageLunchClick();
+	youTubeNextPageDinnerClick();
+	youTubePrevPageDinnerClick();
+	edamamNextPageBreakfastClick();
+	edamamPrevPageBreakfastClick();
+	edamamNextPageLunchClick();
+	edamamPrevPageLunchClick();
+	edamamNextPageDinnerClick();
+	edamamPrevPageDinnerClick();
 	closeModalClick();
 	closeModalDocClick();
 	closeModalKeyupClick();

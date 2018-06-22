@@ -8,71 +8,73 @@
 		<link href="https://fonts.googleapis.com/css?family=Archivo" rel="stylesheet">
 		<!-- Add icon library -->
 		<link rel="stylesheet" ref="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		
+
         <link href="main.css" rel="stylesheet" type="text/css" />
     	<link href="float-grid.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
     	<header role="banner">
-    		<h1>Make Smart Meals</h1>
+    		<h1><span>Make Smart Meals</span></h1>
     	</header>
     	<main role="main">
-			<p class="introduction">
-				With 'Make Smart Meals' you can plan your meals for the entire day.
-			</p>
-			<p class="introduction">
-				Just make some choices below and let us find great recipes for you.
-			</p>
-			<button type="button" id="search-again-button">Search Again</button>
+			<div class="search-controls">
+				<button type="button" id="search-again-button">Search Again</button>
+			</div>
 			<form role="form" action="#" class="js-search-form" id="js-search-form">
 				<div class="search-container">
+					<p class="introduction">
+						With 'Make Smart Meals' you can plan your meals for the entire day.
+					</p>
+					<p class="introduction">
+						Just make some choices below and let us find great recipes for you.
+					</p>
 					<div class="row">
 						<div class="col-4">
 						<div>
-							<label for="breakfast-query" class="col-header">Breakfast:*</label>
+							<label for="breakfast-query" class="col-header">Breakfast:</label>
 						</div>
 						<div>
-							<input type="text" name="breakfast-query" id="breakfast-query" class="js-query" required placeholder="e.g. Egg, Pancake...">
+							<input type="text" name="breakfast-query" id="breakfast-query" class="js-query" placeholder="e.g. Egg or Pancake">
 						</div>
 						</div>
 						<div class="col-4">
 						<div>
-							<label for="lunch-query" class="col-header">Lunch:*</label>
+							<label for="lunch-query" class="col-header">Lunch:</label>
 						</div>
 						<div>
-							<input type="text" name="lunch-query" id="lunch-query" class="js-query" required placeholder="e.g. Lentil soup, Kale salad...">
+							<input type="text" name="lunch-query" id="lunch-query" class="js-query" placeholder="e.g. Lentil soup or Kale salad">
 						</div>
 						</div>
 						<div class="col-4">
 						<div>
-							<label for="dinner-query" class="col-header">Dinner:*</label>
+							<label for="dinner-query" class="col-header">Dinner:</label>
 						</div>
 						<div>
-							<input type="text" name="dinner-query" id="dinner-query" class="js-query" required placeholder="e.g. Chicken, Pasta...">
+							<input type="text" name="dinner-query" id="dinner-query" class="js-query"  placeholder="e.g. Chicken or Pasta">
 						</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-12">
-							<label class="col-header">Calories (for the entire day)</label>
+							<label class="col-header">Calories (100-10000 cal/serving)</label>
 						</div>
 						<div class="col-6">
-							<div id="calories-min">
+							<div>
 								<label for="calories-min">Min: </label>
-								<input type="number" name="calories-min" id="calories-min" step="10" min="100" max="9990" placeholder="100-9990">
+								<input type="number" name="calories-min" value="100" id="calories-min" step="10" min="0" max="9990" placeholder="100-9990">
 							</div>
 						</div>
-						<div class="col-6" id="calories-max">
+						<div class="col-6">
 							<label for="calories-max">Max: </label>
-							<input type="number" name="calories-max" id="calories-max" step="10" min="110" max="10000" placeholder="110-10000">
+							<input type="number" name="calories-max" value="10000" id="calories-max" step="10" min="10" max="10000" placeholder="110-10000">
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-6">
 							<div>
-								<label class="col-header">Max Ingredients (for each meal)</label>
+								<label class="col-header">Max Ingredients (1-50 for each meal)</label>
 							</div>
-							<input type="number" name="max-ingredients" id="max-ingredients" step="1" min="1" max="50" placeholder="1-50">
+							<input type="number" name="max-ingredients" id="max-ingredients" step="1" min="1" max="50" placeholder="Max Ingredients">
 						</div>
 					</div>
 					<div class="row">
@@ -105,21 +107,28 @@
 					</div>
 					<div class="row">
 						<div class="col-12">
-					<button type="button" id="clear-search-fields">&times; Clear All</button>
+							<button type="button" id="clear-search-fields">&times; Clear All</button>
 						</div>
 					</div>
 				</div>
         	</form>
-    		<!--<h2><span class="results-info" aria-live="assertive">Results: </span></h2>-->
-			<div class="row js-edamam-results" id="js-edamam-breakfast-results"></div>
-			<div class="row js-youtube-results" id="js-youtube-breakfast-results"></div>
-    		<div class="row js-edamam-results" id="js-edamam-lunch-results"></div>
-			<div class="row js-youtube-results" id="js-youtube-lunch-results"></div>
-      		<div class="row js-edamam-results" id="js-edamam-dinner-results"></div>
-      		<div class="row js-youtube-results" id="js-youtube-dinner-results"></div>
-      		<div class="js-youtube-video"></div>
+			<div class="results-view">
+				<!--<h2><span class="results-info" aria-live="assertive">Results: </span></h2>-->
+				<div class="js-edamam-results" id="js-edamam-breakfast-results"></div>
+				<div class="js-youtube-results" id="js-youtube-breakfast-results"></div>
+			</div>
+			<div class="results-view">
+				<div class="js-edamam-results" id="js-edamam-lunch-results"></div>
+				<div class="js-youtube-results" id="js-youtube-lunch-results"></div>
+			</div>
+			<div class="results-view">
+				<div class="js-edamam-results" id="js-edamam-dinner-results"></div>
+				<div class="js-youtube-results" id="js-youtube-dinner-results"></div>
+			</div>
+				<div class="js-youtube-video"></div>
+			</div>
     	</main>
-		<footer role="contentinfo"><p>© 2018</p></footer>
+		<footer role="contentinfo"><p>© 2018 Onca, Inc. Powered By: Edamam</p></footer>
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js"
           integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
           crossorigin="anonymous"></script>
