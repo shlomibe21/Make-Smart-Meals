@@ -390,7 +390,7 @@ function renderYouTubeResult(result) {
 			.title}">
 	<div class="youtube-img">
 	<img src=${result.snippet.thumbnails.medium.url} alt="${result.snippet
-			.title}" tabindex="0"><img src="Images/youtube-icon.png" class="youtube-play-icon"></a>
+			.title}" tabindex="0"><img src="Images/youtube-icon.png" alt="" class="youtube-play-icon"></a>
 	</div>
 	<a href="https://www.youtube.com/channel/${result.snippet
 			.channelId}" class="channel-link" target="blank">More from this channel...</a>
