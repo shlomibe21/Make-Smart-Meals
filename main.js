@@ -108,7 +108,9 @@ function youtubeThumbnailKeyup() {
 function edamamThumbnailClick() {
 	$('#js-edamam-breakfast-results,#js-edamam-lunch-results,#js-edamam-dinner-results').on('click', '.thumbnail', function(event) {
 		let url = $(this).data('recipeurl');
-		window.open(url);
+		if((url) && (url.length > 0)) {
+			window.open(url);
+		}
 	});
 }
 
@@ -116,7 +118,9 @@ function edamamThumbnailKeyup() {
 	$('#js-edamam-breakfast-results,#js-edamam-lunch-results,#js-edamam-dinner-results').on('keyup', '.thumbnail', function(event) {
 		if (event.keyCode === 13) {
 			let url = $(this).data('recipeurl');
-			window.open(url);
+			if((url) && (url.length > 0)) {
+				window.open(url);
+			}
 		}
 	});
 }
@@ -158,7 +162,7 @@ function getEdamamRecipes(searchQuery, callback, meal) {
 		success: callback,
 		error: function (jqXHR) {
 			// TODO: print an error to the user
-			alert("EDAMAM SERVER ERROR! Can't display " + meal + " results. Please wait a few minutes and try again.");
+			alert("EDAMAM SERVER ERROR! Can't display " + meal + " results. Sorry you've reached the limit of your program. Please wait a few minutes and try again.");
 			console.log("Error: " + jqXHR);
 		},
 	};
@@ -166,26 +170,42 @@ function getEdamamRecipes(searchQuery, callback, meal) {
 }
 
 function renderEdamamResult(result) {
-	if(!result) {
-		return;
+	let template = '';
+	if(result) {
+		let calories;
+		let infoTemplate ='';
+		let newLabelStr = result.recipe.label;
+		if((result.recipe.calories) && (result.recipe.yield)) {
+			calories = result.recipe.calories/result.recipe.yield;
+			calories = Math.floor(calories);
+			infoTemplate = `Calories:${calories}, Yield:${result.recipe.yield}`;
+		}
+		// If label is too long cut it and add ... at the end
+		/*if(result.recipe.label.length > 30) {
+			newLabelStr = result.recipe.label.substring(0,30) + '...';
+		}*/
+		template = `
+			<div class="col-3 thumbnail-div">
+			<a class="thumbnail" data-recipeUrl="${result.recipe.url}" title="${result.recipe.label}">	
+			<img src=${result.recipe.image} alt="${result.recipe.label}" tabindex="0"></a>
+			<p class="recipe-label">${newLabelStr}</P>
+			<p class="recipe-info">${infoTemplate}</p>
+			<a href="${result.recipe.url}" target="_blank">${result.recipe.source}</a>
+			</div>
+	  	`;
 	}
-	let calories;
-	let infoTemplate ='';
-	if((result.recipe.calories) && (result.recipe.yield)) {
-		calories = result.recipe.calories/result.recipe.yield;
-		calories = Math.floor(calories);
-		infoTemplate = `Calories:${calories} Yield:${result.recipe.yield}`;
+	else { // In case of issue with results, display data not found message
+		template = `
+		<div class="col-3 thumbnail-div">
+		<div class="thumbnail">
+		<img src="Images/warning-147699_640.png" alt="Data not found!"></a>
+		</div>
+		<p class="recipe-label">oops... recipe not found!</P>
+		</div>
+		`;		
 	}
 	
-	return `
-    <div class="col-3 thumbnail-div">
-	<a class="thumbnail" data-recipeUrl="${result.recipe.url}" title="${result.recipe.label}">	
-	<img src=${result.recipe.image} alt="${result.recipe.label}" tabindex="0"></a>
-	<p>${result.recipe.label}</P>
-	<p class="recipe-info">${infoTemplate}</p>
-	<a href="${result.recipe.url}" target="_blank">${result.recipe.source}</a>
-	</div>
-  	`;
+	return template;
 }
 
 function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipeNum) {
@@ -208,8 +228,6 @@ function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipe
 	switch(meal) {
 		case 'Breakfast':
 			edamamBreakfastData = data;
-			imgSrc = "breakfast-square.jpg";
-			imgAlt = "Breakfast Image";
 			divId = '#js-edamam-breakfast-results';
 			prevButtonId = 'js-edamam-prev-page-breakfast';
 			nextButtonId = 'js-edamam-next-page-breakfast';
@@ -234,8 +252,6 @@ function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipe
 		break;
 		case 'Lunch':
 			edamamLunchData = data;
-			imgSrc = "lunch-square.jpg";
-			imgAlt = "Lunch Image";
 			divId = '#js-edamam-lunch-results';
 			prevButtonId = 'js-edamam-prev-page-lunch';
 			nextButtonId = 'js-edamam-next-page-lunch';
@@ -259,8 +275,6 @@ function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipe
 		break;
 		case 'Dinner':
 			edamamDinnerData = data;
-			imgSrc = "dinner-square.jpg";
-			imgAlt = "Dinner Image";
 			divId = '#js-edamam-dinner-results';
 			prevButtonId = 'js-edamam-prev-page-dinner';
 			nextButtonId = 'js-edamam-next-page-dinner';
@@ -287,11 +301,7 @@ function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipe
 	// In case of no data display a message to user
 	if(data.count === 0) {
 		template = `
-		<div class="row">
-		<img src=${imgSrc} alt=${imgAlt} class="meal-icon"></a>
-		<p class="meal-title">${meal}</p>
 		<p>Sorry, we couldn't find any recipe!</p>
-		</div>
 		`;
 	}
 	else {
@@ -302,7 +312,10 @@ function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipe
 
 		try {
     		for(let i = edamamFirstRecipeNum; i < edamamLastRecipeNum; i++) {
-				results.push(renderEdamamResult(data.hits[i]));
+				let result = renderEdamamResult(data.hits[i]);
+				if(result) {
+					results.push(result);
+				}
 			}
 		}
 		catch(err) {
@@ -310,20 +323,20 @@ function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipe
 			return;
 		} 
 		
+		if(results.length > 0) {
 		template = `
-		<img src=${imgSrc} alt=${imgAlt} class="meal-icon"></a>
-		<p class="meal-title">${meal}</p>
-		<div class="row">
-		<section role="region">
-		<legend class="results-title">Recipes:</legend>
-		${results.join("")}
-		</div>
-		<div>
-		${prevButton}
-		${nextButton}
-		</div>
-		</region>
-		`;	
+			<div class="row">
+			<section role="region">
+			<legend class="results-title">Recipes:</legend>
+			${results.join("")}
+			</div>
+			<div>
+			${prevButton}
+			${nextButton}
+			</div>
+			</region>
+			`;	
+		}
 	}
 	
 	$(divId).html(template);
@@ -377,7 +390,7 @@ function renderYouTubeResult(result) {
 			.title}">
 	<div class="youtube-img">
 	<img src=${result.snippet.thumbnails.medium.url} alt="${result.snippet
-			.title}" tabindex="0"><img src="youtube-icon.png" class="youtube-play-icon"></a>
+			.title}" tabindex="0"><img src="Images/youtube-icon.png" class="youtube-play-icon"></a>
 	</div>
 	<a href="https://www.youtube.com/channel/${result.snippet
 			.channelId}" class="channel-link" target="blank">More from this channel...</a>
@@ -583,6 +596,39 @@ function edamamPrevPageDinnerClick() {
 	});
 }
 
+function displayResultsTitle(meal) {
+	let template;
+	let imgSrc;
+	let imgAlt;
+	let divId;
+
+	switch(meal) {
+		case 'Breakfast':
+			imgSrc = "Images/breakfast-square.jpg";
+			imgAlt = "Breakfast Image";
+			divId = '#js-breakfast-results-title';
+		break;
+		case 'Lunch':
+			imgSrc = "Images/lunch-square.jpg";
+			imgAlt = "Lunch Image";
+			divId = '#js-lunch-results-title';
+		break;
+		case 'Dinner':
+			imgSrc = "Images/dinner-square.jpg";
+			imgAlt = "Dinner Image";
+			divId = '#js-dinner-results-title';
+		break;
+		default:
+			return;
+	}
+
+	template = `
+		<img src=${imgSrc} alt=${imgAlt} class="meal-icon"></a>
+		<p class="meal-title">${meal}</p>
+	`;	
+	$(divId).html(template);
+}
+
 function searchSubmit() {
 	$('.js-search-form').submit(event => {
 		event.preventDefault();
@@ -652,16 +698,19 @@ function searchSubmit() {
 		$('#search-again-button').show();
 
 		if (searchQuery.breakfastQuery) {
+			displayResultsTitle("Breakfast");
 			searchQuery.query = searchQuery.breakfastQuery;
 			getEdamamRecipes(searchQuery, displayEdamamBreakfastResults, "Breakfast");
 			getYouTubeDataFromApi(searchQuery.query, displayYouTubeBreakfastResults);
 		}
 		if (searchQuery.lunchQuery){
+			displayResultsTitle("Lunch");
 			searchQuery.query = searchQuery.lunchQuery;
 			getEdamamRecipes(searchQuery, displayEdamamLunchResults, "Lunch");
 			getYouTubeDataFromApi(searchQuery.query, displayYouTubeLunchResults);
 		}
 		if (searchQuery.dinnerQuery) {
+			displayResultsTitle("Dinner");
 			searchQuery.query = searchQuery.dinnerQuery;
 			getEdamamRecipes(searchQuery, displayEdamamDinnerResults, "Dinner");
 			getYouTubeDataFromApi(searchQuery.query, displayYouTubeDinnerResults);

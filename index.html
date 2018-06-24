@@ -61,12 +61,12 @@
 						<div class="col-6">
 							<div>
 								<label for="calories-min">Min: </label>
-								<input type="number" name="calories-min" value="10" id="calories-min" step="10" min="10" max="9990" placeholder="100-9990">
+								<input type="number" name="calories-min" value="10" id="calories-min" step="10" min="10" max="9990" placeholder="Min. calories">
 							</div>
 						</div>
 						<div class="col-6">
 							<label for="calories-max">Max: </label>
-							<input type="number" name="calories-max" value="10000" id="calories-max" step="10" min="20" max="10000" placeholder="110-10000">
+							<input type="number" name="calories-max" value="10000" id="calories-max" step="10" min="20" max="10000" placeholder="Max calories">
 						</div>
 					</div>
 					<div class="row">
@@ -113,15 +113,17 @@
 				</div>
         	</form>
 			<div class="results-view">
-				<!--<h2><span class="results-info" aria-live="assertive">Results: </span></h2>-->
+				<div id="js-breakfast-results-title"></div>
 				<div class="js-edamam-results" id="js-edamam-breakfast-results"></div>
 				<div class="js-youtube-results" id="js-youtube-breakfast-results"></div>
 			</div>
 			<div class="results-view">
+				<div  id="js-lunch-results-title"></div>
 				<div class="js-edamam-results" id="js-edamam-lunch-results"></div>
 				<div class="js-youtube-results" id="js-youtube-lunch-results"></div>
 			</div>
 			<div class="results-view">
+				<div id="js-dinner-results-title"></div>
 				<div class="js-edamam-results" id="js-edamam-dinner-results"></div>
 				<div class="js-youtube-results" id="js-youtube-dinner-results"></div>
 			</div>

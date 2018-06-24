@@ -5,7 +5,7 @@
 body {
 	font-family: 'Archivo', sans-serif;
 	margin-bottom: 100px;
-	background: url('cook_2142960_1920.jpg') no-repeat center center fixed; 
+	background: url('Images/cook_2142960_1920.jpg') no-repeat center center fixed; 
 	background-position: 0px 0px;
 	background-size: cover;
 }
@@ -44,13 +44,18 @@ h1 {
 }
 
 .thumbnail-div {
-	display: inline-block;
+	/*display: inline-block;*/
 	border: solid 1px orange;
 	width: 100%;
 	padding: 10px;
 	margin-top: 20px;
 	margin-bottom: 50px;
 	background-color: white;
+}
+
+.thumbnail-div p {
+	width: 200px;
+	white-space: nowrap;
 	text-overflow: ellipsis;
   	overflow: hidden;
 }
@@ -338,6 +343,10 @@ select {
   left: 0;
 }
 
+.recipe-label {
+	font-weight: bold;
+}
+
 .recipe-info {
-	color: #41f441;
+	color: #106808;
 }
