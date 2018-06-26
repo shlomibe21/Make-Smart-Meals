@@ -61,11 +61,11 @@ h2, h3 {
 }
 
 .recipe-row {
-	min-height: 620px;
+	min-height: 650px;
 }
 
 .video-row {
-	min-height: 370px;
+	min-height: 400px;
 }
 
 .thumbnail img {
