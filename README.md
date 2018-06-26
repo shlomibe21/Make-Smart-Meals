@@ -12,7 +12,7 @@ https://shlomibe21.github.io/Make-Smart-Meals
 ## App Screeshots
 
 ### Search view:
-![Search View](https://github.com/shlomibe21/Make-Smart-Meals/blob/master/Screenshots/MakeSmartMealsNewSearch2Screenshot.png)
+![Search View](https://github.com/shlomibe21/Make-Smart-Meals/blob/master/Screenshots/MakeSmartMealsNewSearchScreenshot.png)
 ### Serarch results - breakfast recipes and videos:
 ![Serarch results - breakfast recipes and videos](https://github.com/shlomibe21/Make-Smart-Meals/blob/master/Screenshots/MakeSmartMealsBreakfastResultsScreenshot.png)
 ### Youtube video:
