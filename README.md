@@ -29,3 +29,6 @@ https://shlomibe21.github.io/Make-Smart-Meals
 Shlomi Benshlomo 
 ## Company
 Onca, inc.
+
+## Acknowledgements
+Mario Mol and James Duncan, Mentors
