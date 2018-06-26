@@ -185,22 +185,26 @@ function renderEdamamResult(result) {
 			newLabelStr = result.recipe.label.substring(0,30) + '...';
 		}*/
 		template = `
-			<div class="col-3 thumbnail-div">
+			<div class="col-3">
+			<div class="thumbnail-div recipe-img">
 			<a class="thumbnail" data-recipeUrl="${result.recipe.url}" title="${result.recipe.label}">	
 			<img src=${result.recipe.image} alt="${result.recipe.label}" tabindex="0"></a>
 			<p class="recipe-label">${newLabelStr}</P>
 			<p class="recipe-info">${infoTemplate}</p>
 			<a href="${result.recipe.url}" target="_blank">${result.recipe.source}</a>
 			</div>
+			</div>
 	  	`;
 	}
 	else { // In case of issue with results, display data not found message
 		template = `
-		<div class="col-3 thumbnail-div">
+		<div class="col-3">
+		<div class="thumbnail-div recipe-img">
 		<div class="thumbnail">
 		<img src="Images/warning-147699_640.png" alt="Data not found!"></a>
 		</div>
 		<p class="recipe-label">oops... recipe not found!</P>
+		</div>
 		</div>
 		`;		
 	}
@@ -301,7 +305,9 @@ function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipe
 	// In case of no data display a message to user
 	if(data.count === 0) {
 		template = `
+		<div class="row">
 		<p>Sorry, we couldn't find any recipe!</p>
+		</div>
 		`;
 	}
 	else {
@@ -385,7 +391,7 @@ function getYouTubeDataFromApi(searchTerm, callback) {
 function renderYouTubeResult(result) {
 	return `
     <div class="col-3">
-	<div class="thumbnail-div">
+	<div class="thumbnail-div video-img">
 	<a class="thumbnail" data-videoId="${result.id.videoId}" title="${result.snippet
 			.title}">
 	<div class="youtube-img">

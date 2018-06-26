@@ -90,4 +90,14 @@
 	.col-3 {
 		width: 25%;
 	}
+
+	.thumbnail-div p {
+		width: 180px;
+	}
+}
+
+@media only screen and (min-width: 1300px) {
+	.thumbnail-div p {
+		width: 250px;
+	}
 }
