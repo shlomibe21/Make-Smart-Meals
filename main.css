@@ -45,7 +45,7 @@ h2, h3 {
 }
 
 .thumbnail-div {
-	border: solid 1px lightgrey; /*orange;*/
+	border: solid 1px lightgrey;
 	width: 100%;
 	padding: 10px;
 	margin-top: 20px;
@@ -60,12 +60,12 @@ h2, h3 {
   	overflow: hidden;
 }
 
-.thumbnail-div recipe-img {
-	min-height: 400px;
+.recipe-row {
+	min-height: 620px;
 }
 
-.thumbnail-div video-img {
-	min-height: 350px;
+.video-row {
+	min-height: 370px;
 }
 
 .thumbnail img {

@@ -125,17 +125,6 @@ function edamamThumbnailKeyup() {
 	});
 }
 
-//function searchBoxTyping() {
-	//$('.js-query').keyup(function (event) {
-		//if ($(this).val() === '') {
-			//$('.submit-button').prop('disabled', true);
-		//}
-		//else {
-			//$('.submit-button').prop('disabled', false);
-		//}
-	//});
-//}
-
 function clearAllFormFields() {
 	$("input").val("");
 	$("select").val("");
@@ -186,7 +175,7 @@ function renderEdamamResult(result) {
 		}*/
 		template = `
 			<div class="col-3">
-			<div class="thumbnail-div recipe-img">
+			<div class="thumbnail-div">
 			<a class="thumbnail" data-recipeUrl="${result.recipe.url}" title="${result.recipe.label}">	
 			<img src=${result.recipe.image} alt="${result.recipe.label}" tabindex="0"></a>
 			<p class="recipe-label">${newLabelStr}</P>
@@ -199,7 +188,7 @@ function renderEdamamResult(result) {
 	else { // In case of issue with results, display data not found message
 		template = `
 		<div class="col-3">
-		<div class="thumbnail-div recipe-img">
+		<div class="thumbnail-div">
 		<div class="thumbnail">
 		<img src="Images/warning-147699_640.png" alt="Data not found!"></a>
 		</div>
@@ -331,7 +320,7 @@ function displayEdamamResults(data, meal, edamamFirstRecipeNum, edamamLastRecipe
 		
 		if(results.length > 0) {
 		template = `
-			<div class="row">
+			<div class="row recipe-row">
 			<section role="region">
 			<legend class="results-title">Recipes:</legend>
 			${results.join("")}
@@ -391,7 +380,7 @@ function getYouTubeDataFromApi(searchTerm, callback) {
 function renderYouTubeResult(result) {
 	return `
     <div class="col-3">
-	<div class="thumbnail-div video-img">
+	<div class="thumbnail-div">
 	<a class="thumbnail" data-videoId="${result.id.videoId}" title="${result.snippet
 			.title}">
 	<div class="youtube-img">
@@ -473,7 +462,7 @@ function displayYouTubeSearchResults(data, meal) {
 
 		template = `
 			<section role="region">
-			<div class="row">
+			<div class="row video-row">
 			<legend class="results-title">Suggested Videos:</legend>
 			${results.join("")}
 			</div>
@@ -747,7 +736,6 @@ function handleYoutubeSearch() {
 	closeModalKeyupClick();
 	searchAgainButtonClick();
 	clearSearchFieldsClick();
-	//searchBoxTyping();
 }
 
 $(handleYoutubeSearch);
