@@ -42,6 +42,7 @@ h2, h3 {
 	margin-left: 0px;
 	margin-right: 0px;
 	margin-bottom: 30px;
+	border-radius: 5px;
 }
 
 .thumbnail-div {
@@ -174,7 +175,8 @@ select {
   	margin-right: auto;
 	padding: 20px;
 	background-color: rgba(230,230,230,0.6);
-    overflow-x: hidden;
+	overflow-x: hidden;
+	border-radius: 5px;
 }
 
 .col-header {
