@@ -1,141 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<link rel="shortcut icon" href="./Images/breakfast-square.jpg" id="favicon">
-    	<!-- Responsive viewport tag, tells small screens that it's responsive -->
-    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Make Smart Meals</title>
-		<link href="https://fonts.googleapis.com/css?family=Archivo" rel="stylesheet">
-		<!-- Add icon library -->
-		<link rel="stylesheet" ref="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-        <link href="main.css" rel="stylesheet" type="text/css" />
-    	<link href="float-grid.css" rel="stylesheet" type="text/css" />
-    </head>
-    <body>
-    	<header role="banner">
-    		<h1><span>Make Smart Meals</span></h1>
-    	</header>
-    	<main role="main" aria-live="polite">
-			<div class="search-controls">
-				<button type="button" id="search-again-button">Search Again</button>
-			</div>
-			<form role="form" action="#" class="js-search-form" id="js-search-form">
-				<div class="search-container">
-					<p class="introduction">
-						With 'Make Smart Meals' you can plan your meals for the entire day.
-					</p>
-					<p class="introduction">
-						Just make some choices below and let us find great recipes for you.
-					</p>
-					<div class="row">
-						<div class="col-4">
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="./Images/breakfast-square.jpg" id="favicon">
+	<!-- Responsive viewport tag, tells small screens that it's responsive -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Make Smart Meals</title>
+	<link href="https://fonts.googleapis.com/css?family=Archivo" rel="stylesheet">
+	<!-- Add icon library -->
+	<link rel="stylesheet" ref="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<link href="main.css" rel="stylesheet" type="text/css" />
+	<link href="float-grid.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<header role="banner">
+		<h1><span>Make Smart Meals</span></h1>
+	</header>
+	<main role="main" aria-live="polite">
+		<div class="search-controls">
+			<button type="button" id="search-again-button">Search Again</button>
+		</div>
+		<form role="form" action="#" class="js-search-form" id="js-search-form">
+			<div class="search-container">
+				<p class="introduction">
+					With 'Make Smart Meals' you can plan your meals for the entire day.
+				</p>
+				<p class="introduction">
+					Just make some choices below and let us find great recipes for you.
+				</p>
+				<div class="row">
+					<div class="col-4">
 						<div>
 							<label for="breakfast-query" class="col-header">Breakfast:</label>
 						</div>
 						<div>
 							<input type="text" name="breakfast-query" id="breakfast-query" class="js-query" placeholder="e.g. Egg or Pancake">
 						</div>
-						</div>
-						<div class="col-4">
+					</div>
+					<div class="col-4">
 						<div>
 							<label for="lunch-query" class="col-header">Lunch:</label>
 						</div>
 						<div>
 							<input type="text" name="lunch-query" id="lunch-query" class="js-query" placeholder="e.g. Lentil soup or Kale salad">
 						</div>
-						</div>
-						<div class="col-4">
+					</div>
+					<div class="col-4">
 						<div>
 							<label for="dinner-query" class="col-header">Dinner:</label>
 						</div>
 						<div>
-							<input type="text" name="dinner-query" id="dinner-query" class="js-query"  placeholder="e.g. Chicken or Pasta">
-						</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-12">
-							<label class="col-header">Calories (10-10000 cal/serving)</label>
-						</div>
-						<div class="col-6">
-							<div>
-								<label for="calories-min">Min: </label>
-								<input type="number" name="calories-min" value="10" id="calories-min" step="10" min="10" max="9990" placeholder="Min. calories">
-							</div>
-						</div>
-						<div class="col-6">
-							<label for="calories-max">Max: </label>
-							<input type="number" name="calories-max" value="10000" id="calories-max" step="10" min="20" max="10000" placeholder="Max calories">
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<div>
-								<label for="max-ingredients" class="col-header">Max Ingredients (1-50 for each meal)</label>
-							</div>
-							<input type="number" name="max-ingredients" id="max-ingredients" step="1" min="1" max="50" placeholder="Max Ingredients">
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label for="diet-menu" class="col-header">Diet:</label>
-							<select id="diet-menu" name="Diet">
-								<option value="" disabled selected>Diet preferences</option>
-								<option value="balanced">balanced</option>
-								<option value="low-carb">low-carb</option>
-								<option value="low-fat">low-fat</option>
-								<option value="high-protein">high-protein</option>
-							</select>
-						</div>
-						<div class="col-6">
-							<label for="health-menu" class="col-header">Health:</label>
-							<select id="health-menu" name="Health">
-								<option value="" disabled selected>Health preferences</option>
-								<option value="vegetarian">vegetarian</option>
-								<option value="vegan">vegan</option>
-								<option value="peanut-free">peanut-free</option>
-								<option value="alcohol-free">alcohol-free</option>
-								<option value="tree-nut-free">tree-nut-free</option>
-							</select>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-12">
-							<button type="submit" class="submit-button">Let's Cook Something</button>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-12">
-							<button type="button" id="clear-search-fields">&times; Clear All</button>
+							<input type="text" name="dinner-query" id="dinner-query" class="js-query" placeholder="e.g. Chicken or Pasta">
 						</div>
 					</div>
 				</div>
-        	</form>
-			<div class="results-view">
-				<div id="js-breakfast-results-title"></div>
-				<div class="js-edamam-results" id="js-edamam-breakfast-results"></div>
-				<div class="js-youtube-results" id="js-youtube-breakfast-results"></div>
+				<div class="row">
+					<div class="col-12">
+						<label class="col-header">Calories (10-10000 cal/serving)</label>
+					</div>
+					<div class="col-6">
+						<div>
+							<label for="calories-min">Min: </label>
+							<input type="number" name="calories-min" value="10" id="calories-min" step="10" min="10" max="9990" placeholder="Min. calories">
+						</div>
+					</div>
+					<div class="col-6">
+						<label for="calories-max">Max: </label>
+						<input type="number" name="calories-max" value="10000" id="calories-max" step="10" min="20" max="10000"
+						 placeholder="Max calories">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-6">
+						<div>
+							<label for="max-ingredients" class="col-header">Max Ingredients (1-50 for each meal)</label>
+						</div>
+						<input type="number" name="max-ingredients" id="max-ingredients" step="1" min="1" max="50" placeholder="Max Ingredients">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-6">
+						<label for="diet-menu" class="col-header">Diet:</label>
+						<select id="diet-menu" name="Diet">
+							<option value="" disabled selected>Diet preferences</option>
+							<option value="balanced">balanced</option>
+							<option value="low-carb">low-carb</option>
+							<option value="low-fat">low-fat</option>
+							<option value="high-protein">high-protein</option>
+						</select>
+					</div>
+					<div class="col-6">
+						<label for="health-menu" class="col-header">Health:</label>
+						<select id="health-menu" name="Health">
+							<option value="" disabled selected>Health preferences</option>
+							<option value="vegetarian">vegetarian</option>
+							<option value="vegan">vegan</option>
+							<option value="peanut-free">peanut-free</option>
+							<option value="alcohol-free">alcohol-free</option>
+							<option value="tree-nut-free">tree-nut-free</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<button type="submit" class="submit-button">Let's Cook Something</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<button type="button" id="clear-search-fields">&times; Clear All</button>
+					</div>
+				</div>
 			</div>
-			<div class="results-view">
-				<div  id="js-lunch-results-title"></div>
-				<div class="js-edamam-results" id="js-edamam-lunch-results"></div>
-				<div class="js-youtube-results" id="js-youtube-lunch-results"></div>
-			</div>
-			<div class="results-view">
-				<div id="js-dinner-results-title"></div>
-				<div class="js-edamam-results" id="js-edamam-dinner-results"></div>
-				<div class="js-youtube-results" id="js-youtube-dinner-results"></div>
-			</div>
-				<div class="js-youtube-video"></div>
-			</div>
-    	</main>
-		<footer role="contentinfo"><p>© 2018 Onca, Inc. Powered By: Edamam</p></footer>
-		<script src="https://code.jquery.com/jquery-3.2.1.min.js"
-          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-          crossorigin="anonymous"></script>
-    	<script src="config.js" type="text/javascript"></script>
-    	<script src="main.js" type="text/javascript"></script>
-    </body>
+		</form>
+		<div class="results-view">
+			<div id="js-breakfast-results-title"></div>
+			<div class="js-edamam-results" id="js-edamam-breakfast-results"></div>
+			<div class="js-youtube-results" id="js-youtube-breakfast-results"></div>
+		</div>
+		<div class="results-view">
+			<div id="js-lunch-results-title"></div>
+			<div class="js-edamam-results" id="js-edamam-lunch-results"></div>
+			<div class="js-youtube-results" id="js-youtube-lunch-results"></div>
+		</div>
+		<div class="results-view">
+			<div id="js-dinner-results-title"></div>
+			<div class="js-edamam-results" id="js-edamam-dinner-results"></div>
+			<div class="js-youtube-results" id="js-youtube-dinner-results"></div>
+		</div>
+		<div class="js-youtube-video"></div>
+		</div>
+	</main>
+	<footer role="contentinfo">
+		<p>
+			&copy;
+			<script type="text/javascript">
+				let today = new Date();
+				let year = today.getFullYear();
+				document.write(year);
+			</script>, Shlomi Benshlomo (Onca, Inc.)
+		</p>
+	</footer>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	 crossorigin="anonymous"></script>
+	<script src="config.js" type="text/javascript"></script>
+	<script src="main.js" type="text/javascript"></script>
+</body>
+
 </html>
